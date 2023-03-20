@@ -427,7 +427,15 @@ top: -1px !important;
 .super-navbar__content {
 margin: auto !important;
 }
-/*----------  Site Logo  ----------*/
+
+/*----------  Image Logo  ----------*/
+.super-navbar__logo-image {
+opacity: 0.7 !important;
+}
+.super-navbar__logo-image:hover {
+opacity: 0.9 !important;
+}
+/*----------  Text Logo  ----------*/
 .super-navbar__logo-text {
 font-family:var(--system-ui) !important;
 font-weight: 300 !important;
