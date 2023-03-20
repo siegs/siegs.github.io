@@ -919,4 +919,27 @@ margin-inline-start:0!important;}
 .page__about .embed_documentation_footer--documentationFooter--pnTqy {
 display: none !important;
 }
-/*=====  End of About Page  ======*/
+/*=============================================
+=                   Home Page                 =
+=============================================*/
+/*
+Home Page CSS is targeted by the prefix ".page__index" - where "index" is the name of the page
+*/
+.page__index .notion-page {
+display: none !important;
+}
+.page__index .notion-root {
+align-items: center !important;
+}
+.page__index .notion-toggle__content .notion-text__content{
+text-align: left !important;
+}
+.page__index .notion-header__title-wrapper {
+margin-bottom: 0px !important;
+}
+
+@media screen and (max-width: 600px) {
+.page__index .notion-header.page {
+margin-top: 2rem !important;
+}}
+/*=====  End of Home Page  ======*/
