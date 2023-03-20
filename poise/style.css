@@ -11,11 +11,11 @@ src: local('system-ui') format('otf');
 }
 /*----------  Disable selection of content (optional) ----------*/
 .notion-text, .notion-bulleted-list, .notion-numbered-list, .notion-quote, .notion-header, .notion-heading, .notion-image, .notion-toggle, .notion-callout, .notion-callout__content, .notion-image.page-width, .notion-callout .notion-image, .notion-image.page-width img, .super-content .notion-collection-gallery.large .notion-collection-card, .notion-collection-card .notion-property__title, .notion-collection-card__property-list, .super-footer, .super-navbar__logo-text {
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
 }
 /** Background Color **/
 body {
@@ -119,7 +119,7 @@ font-family: var(--system-ui) !important;
 font-stretch: 110% !important;
 font-size: 2.75rem !important;
 display: block !important;
-font-weight: 700; !important;
+font-weight: 700 !important;
 padding-left: calc(env(safe-area-inset-left) + 6%);
 padding-right: calc(env(safe-area-inset-right) + 6%);
 margin-left: auto !important;
@@ -193,13 +193,13 @@ letter-spacing: 0.02rem !important;
 text-align: center !important;
 }
 .super-content {
-max-width: 1250px; !important;
-margin: auto; !important;
+max-width: 1250px !important;
+margin: auto !important;
 padding-left: calc(env(safe-area-inset-left) + 6%);
 padding-right: calc(env(safe-area-inset-right) + 6%);
 }
 .notion-header__title {
-max-width: 750px; !important;
+max-width: 750px !important;
 text-align: center !important;
 }
 .notion-text__content, .notion-bulleted-list, .notion-numbered-list {
@@ -239,8 +239,7 @@ border-radius: 2rem !important;
 text-align: center !important;
 padding: 3rem 3rem 3rem 3rem !important;
 margin: 2rem 0rem 2rem 0rem !important;
-background: linear-gradient(180deg,hsla(0,0%,96%,.03),hsla(0,0%,96%,.02));
-/* box-shadow: 0px -1px 0px 0.5px rgba(232, 228, 208, 0.1) !important;*/
+background: linear-gradient(180deg,hsla(0,0%,96%,.03),hsla(0,0%,96%,.02)) !important;
 }
 .notion-callout .notion-image {
 margin: 0px !important;
@@ -294,13 +293,13 @@ margin: 1.75rem auto 1.75rem auto !important;
 margin: 1.25rem auto 1.25rem auto !important;
 }
 .notion-toggle.closed {
-padding: 0rem 1rem 0rem 1rem;
+padding: 0rem 1rem 0rem 1rem !important;
 }}
 .notion-toggle.open {
 border-radius: 1.75rem !important;
 }
 .notion-toggle__summary {
-padding: 1rem 2rem 1rem 2rem;
+padding: 1rem 2rem 1rem 2rem !important;
 }
 .notion-toggle__content {
 padding: 1rem 8% 2rem 8% !important
@@ -342,7 +341,7 @@ margin-top: -0.25rem !important;
 margin-bottom: -1rem !important;
 }}
 .notion-toggle__content .notion-text__content {
-padding: 2px 2px;
+padding: 2px 2px !important;
 }
 .notion-toggle__content .notion-text__children {
 margin-inline-start: 0px !important;
@@ -400,11 +399,11 @@ color: rgba(232, 228, 208, 0.15) !important;
 width: 34px !important;
 }
 .super-password-protection__input-lock {
-display: none; !important;
+display: none !important;
 }
 .super-password-protection__input input {
 background-color: rgba(232, 228, 208, 0) !important;
-font-size: 1.2rem;
+font-size: 1.2rem !important;
 font-family: var(--system-ui) !important;
 color: rgba(232, 228, 208, 0.45) !important;
 }
@@ -650,8 +649,8 @@ color: rgba(232, 228, 208, 0.5) !important;
 }
 .notion-pill {
 font-family: var(--system-ui) !important;
-font-size: 0.75rem; !important;
-font-weight: 500; !important;
+font-size: 0.75rem !important;
+font-weight: 500 !important;
 text-transform: uppercase;
 color: rgba(232, 228, 208, 0.5) !important;
 background: rgba(232, 228, 208, 0.1) !important;
@@ -677,7 +676,7 @@ background: linear-gradient(160deg,hsla(0,0%,96%,.045),hsla(0,0%,96%,.025)) !imp
 /* Card Title */
 .super-content .notion-collection-gallery.large .notion-collection-card .notion-property__title span {
 font-family: var(--system-ui) !important;
-font-weight: 700;
+font-weight: 700 !important;
 font-size: 1.75rem !important;
 margin-bottom: 0.5rem !important;
 color: rgba(232, 228, 208, 0.85)!important
@@ -897,7 +896,7 @@ min-width: 4rem !important;
 }
 @media screen and (max-width: 600px) {
 .page__about .notion-column .notion-image {
-max-width: 4rem;
+max-width: 4rem !important;
 min-width: 4rem !important;
 }}
 .page__about #block-11746c8bce064cd48aacc1534b6de342 {
