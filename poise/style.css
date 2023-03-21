@@ -479,9 +479,6 @@ padding-right: calc(env(safe-area-inset-right) + 3%);
 .super-navbar__content {
 padding: 0 !important;
 }}
-.super-navbar__logo {
-padding: 0rem !important;
-}
 .super-navbar__actions {
 padding-right: 1px !important;
 }
