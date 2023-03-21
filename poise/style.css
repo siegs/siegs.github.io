@@ -427,13 +427,12 @@ top: -1px !important;
 .super-navbar__content {
 margin: auto !important;
 }
-
 /*----------  Image Logo  ----------*/
 .super-navbar__logo-image {
-opacity: 0.7 !important;
+opacity: 0.8 !important;
 }
 .super-navbar__logo-image:hover {
-opacity: 0.9 !important;
+opacity: 0.95 !important;
 }
 /*----------  Text Logo  ----------*/
 .super-navbar__logo-text {
