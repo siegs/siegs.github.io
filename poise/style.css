@@ -573,16 +573,18 @@ max-height: 110% !important;
 height: 110% !important;
 line-height: 2rem !important;
 background-color: #2B2B2B !important;
+align-items: center !important;
 }
 .super-navbar__menu .super-navbar__item {
 font-family:var(--system-ui) !important;
 font-weight: 300 !important;
-margin: 2rem !important;
+margin-top: 2rem !important;
 justify-content: center !important;
 line-height: 2rem !important;
 letter-spacing: 0.05rem !important;
-max-width: 90px !important;
+max-width: 100% !important;
 font-size: 1.5rem !important;
+padding: 2rem !important;
 }
 .super-navbar__menu-item-list {
 margin-top: 3.5rem !important;
@@ -590,8 +592,8 @@ text-align: -webkit-center !important;
 margin-right: 0px !important;
 }
 .super-navbar__menu-close {
-right: 1.5rem !important;
-top: 1.25rem !important;
+right: 1rem !important;
+top: 1rem !important;
 }
 .super-navbar__menu-close element.style {
 width: 2rem !important;
