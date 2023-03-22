@@ -830,9 +830,6 @@ max-width: 700px !important;
 .parent-page__work .notion-callout .notion-image.normal img {
 max-height: 700px !important;
 }
-.parent-page__work .notion-header__content {
-padding: 0px !important;
-}
 .parent-page__work .notion-header__title {
 text-align: left !important;
 }
@@ -870,9 +867,6 @@ If you change the name of your about page (for ex: "me") you will change prefix 
 }
 .page__about .notion-callout .notion-image.normal img {
 max-height: 700px !important;
-}
-.page__about .notion-header__content {
-padding: 0px !important;
 }
 .page__about .notion-header__title {
 text-align: left !important;
