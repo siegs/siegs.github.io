@@ -212,6 +212,12 @@
   ::-webkit-scrollbar-thumb:hover {
   background: rgba(232, 228, 208, 0.2) !important;
   }
+  /*----------  Scrollbar  ----------*/
+  .notion-divider {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  border-width: 4px !important;
+  border-radius: 1rem !important;
+  }
   /*=============================================
   =                  Callouts                   =
   =============================================*/
