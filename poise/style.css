@@ -814,10 +814,6 @@
   .parent-page__work .notion-callout .notion-image.normal img {
   max-height: 700px !important;
   }
-  @media screen and (min-width: 1300px) {
-  .parent-page__work .notion-header__content {
-  padding: 0px !important;
-  }}
   .parent-page__work .notion-header__title {
   text-align: left !important;
   }
@@ -856,10 +852,6 @@
   .page__about .notion-callout .notion-image.normal img {
   max-height: 700px !important;
   }
-  @media screen and (min-width: 1300px) {
-  .page__about .notion-header__content {
-  padding: 0px !important;
-  }}
   .page__about .notion-header__title {
   text-align: left !important;
   }
