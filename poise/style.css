@@ -267,10 +267,6 @@
   .notion-toggle {
   background: linear-gradient(180deg,hsla(0,0%,96%,.03),hsla(0,0%,96%,.02)) !important;
   border-radius: 0.75rem !important;
-  margin: 1.75rem auto 1.75rem auto !important;
-  }
-  @media screen and (max-width: 600px) {
-  .notion-toggle {
   margin: 1.25rem auto 1.25rem auto !important;
   }
   .notion-toggle.closed {
