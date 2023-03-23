@@ -806,6 +806,7 @@
   If you change the name of your parent page (for ex: "doodles") you will change prefix to ".parent-page__doodles"
   */
   .parent-page__work .super-content-wrapper {
+  max-width: 880px !important;
   }
   .parent-page__work .notion-callout .notion-image.normal img {
   max-height: 700px !important;
@@ -843,6 +844,7 @@
   If you change the name of your about page (for ex: "me") you will change prefix to ".page__me"
   */
   .page__about .super-content-wrapper {
+  max-width: 880px !important;
   }
   .page__about .notion-callout .notion-image.normal img {
   max-height: 700px !important;
