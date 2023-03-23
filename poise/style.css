@@ -905,6 +905,9 @@
   /*
   Home Page CSS is targeted by the prefix ".page__index" - where "index" is the name of the page
   */
+  .page__index .notion-collection-gallery.large {
+  max-width: 1250px !important;
+  }
   .page__index .notion-page {
   display: none !important;
   }
