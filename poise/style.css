@@ -412,6 +412,10 @@
   .super-navbar__logo-image {
   opacity: 0.8 !important;
   }
+  @media screen and (max-width: 600px) {
+  .super-navbar__logo-image {
+  width: 58px !important;
+  }}
   .super-navbar__logo-image:hover {
   opacity: 0.95 !important;
   }
