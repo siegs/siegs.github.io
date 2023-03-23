@@ -190,20 +190,6 @@
   .super-content {
   margin: auto !important;
   }
-  .super-content-wrapper {
-  padding-left: calc(env(safe-area-inset-left) + 6%) !important;
-  padding-right: calc(env(safe-area-inset-right) + 6%) !important;
-  }
-  @media screen and (max-width: 600px) {
-  .super-content-wrapper {
-  padding-left: calc(env(safe-area-inset-left) + 4%) !important;
-  padding-right: calc(env(safe-area-inset-right) + 4%) !important;
-  }}
-  @media screen and (max-width: 400px) {
-  .super-content-wrapper {
-  padding-left: calc(env(safe-area-inset-left) + 3%) !important;
-  padding-right: calc(env(safe-area-inset-right) + 3%) !important;
-  }}
   .notion-header__title {
   text-align: center !important;
   }
