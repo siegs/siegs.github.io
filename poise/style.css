@@ -292,6 +292,9 @@
   background: linear-gradient(160deg,hsla(0,0%,96%,.05),hsla(0,0%,96%,.02)) !important;
   }
   /*----------  Toggle Text  ----------*/
+  .notion-toggle__content .notion-text__content{
+  text-align: left !important;
+  }
   .notion-toggle__summary {
   font-family: var(--system-ui) !important;
   letter-spacing: 0.025rem !important;
@@ -920,9 +923,6 @@
   }
   .page__index .notion-root {
   align-items: center !important;
-  }
-  .page__index .notion-toggle__content .notion-text__content{
-  text-align: left !important;
   }
   .page__index .notion-header__title-wrapper {
   margin-bottom: 0px !important;
