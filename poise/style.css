@@ -120,20 +120,15 @@
   font-size: 2.75rem !important;
   display: block !important;
   font-weight: 700 !important;
-  padding-left: calc(env(safe-area-inset-left) + 6%) !important;
-  padding-right: calc(env(safe-area-inset-right) + 6%) !important;
   margin-left: auto !important;
   margin-right: auto !important;
   color: rgba(232, 228, 208, 0.85) !important;
   }
   @media screen and (min-width: 1300px) {
   .notion-header__title {
-  padding: 0 !important;
   }}
   @media screen and (min-width: 800px) {
   .notion-header__title {
-  padding-left: calc(env(safe-area-inset-left) + 3%) !important;
-  padding-right: calc(env(safe-area-inset-right) + 3%) !important;
   }}
   @media screen and (max-width: 600px) {
   .notion-header__title {
