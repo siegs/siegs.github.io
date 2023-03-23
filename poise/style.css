@@ -908,6 +908,9 @@
   .page__index .notion-collection-gallery.large {
   max-width: 1250px !important;
   }
+  .page__index .notion-text {
+  max-width: 650px !important
+  }
   .page__index .notion-page {
   display: none !important;
   }
