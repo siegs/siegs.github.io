@@ -218,7 +218,7 @@
   =                  Callouts                   =
   =============================================*/
   .notion-callout {
-  border-radius: 1.5rem !important
+  border-radius: 1.5rem !important;
   text-align: center !important;
   padding: 2rem 2rem 2rem 2rem !important;
   margin: 1.5rem 0rem 1.5rem 0rem !important;
