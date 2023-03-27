@@ -218,22 +218,16 @@
   =                  Callouts                   =
   =============================================*/
   .notion-callout {
-  border-radius: 2rem !important;
+  border-radius: 1.5rem !important
   text-align: center !important;
-  padding: 3rem 3rem 3rem 3rem !important;
-  margin: 2rem 0rem 2rem 0rem !important;
+  padding: 2rem 2rem 2rem 2rem !important;
+  margin: 1.5rem 0rem 1.5rem 0rem !important;
   background: linear-gradient(180deg,hsla(0,0%,96%,.03),hsla(0,0%,96%,.02)) !important;
   }
   .notion-callout .notion-image {
   margin: 0px !important;
   width: 100% !important;
   }
-  @media (max-width: 800px) {
-  .notion-callout {
-  padding: 2rem 2rem 2rem 2rem !important;
-  border-radius: 1.5rem !important;
-  margin: 1.5rem 0rem 1.5rem 0rem !important;
-  }}
   @media (max-width: 400px) {
   .notion-callout {
   padding: 1rem 1rem 1rem 1rem !important;
