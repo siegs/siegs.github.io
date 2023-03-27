@@ -873,17 +873,12 @@
   .page__about .notion-callout {
   max-width: 700px !important;
   }
-  .page__about .notion-column .notion-image {
-  max-width: 6.25rem;
-  min-width: 4rem !important;
-  }
   @media screen and (max-width: 600px) {
   .page__about .notion-column .notion-image {
-  max-width: 4rem !important;
-  min-width: 4rem !important;
+  max-width: 90% !important;
   }}
   .page__about #block-11746c8bce064cd48aacc1534b6de342 {
-  max-width: 6rem !important;
+  max-width: 10rem !important;
   }
   @media screen and (max-width: 600px) {
   .page__about #block-11746c8bce064cd48aacc1534b6de342 {
