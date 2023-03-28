@@ -863,6 +863,7 @@
   .page__about .notion-column-list {
   max-width: 700px !important;
   flex-wrap: nowrap !important;
+  align-items: center !important;
   }
   .page__about .notion-callout {
   max-width: 700px !important;
