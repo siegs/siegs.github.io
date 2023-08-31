@@ -804,9 +804,6 @@
   .parent-page__work .super-content-wrapper {
   max-width: 1000px !important;
   }
-  .parent-page__work .notion-callout .notion-image.normal img {
-  max-height: 700px !important;
-  }
   .parent-page__work .notion-header__title {
   text-align: left !important;
   }
@@ -821,12 +818,6 @@
   }
   .parent-page__work .super-content-wrapper {
   align-self: center !important;
-  }
-  .parent-page__work .notion-column-list {
-  max-width: 700px !important;
-  }
-  .parent-page__work .notion-callout {
-  max-width: 700px !important;
   }
   .parent-page__work .embed_documentation_footer--documentationFooter--pnTqy {
   display: none !important;
