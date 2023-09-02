@@ -802,7 +802,7 @@
   If you change the name of your parent page (for ex: "doodles") you will change prefix to ".parent-page__doodles"
   */
   .parent-page__work .super-content-wrapper {
-  max-width: 1000px !important;
+  max-width: 1100px !important;
   }
   .parent-page__work .notion-header__title {
   text-align: left !important;
