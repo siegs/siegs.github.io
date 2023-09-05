@@ -824,6 +824,35 @@
   }
   /*=====  End of Project Pages CSS  ======*/
   /*=============================================
+  =                Books Pages                =
+  =============================================*/
+  /*
+  Books Pages are targeted by the prefix ".parent-page__books" - where "books" is name of the parent page to the projects
+  If you change the name of your parent page (for ex: "doodles") you will change prefix to ".parent-page__doodles"
+  */
+  .parent-page__books .super-content-wrapper {
+  max-width: 1100px !important;
+  }
+  .parent-page__books .notion-header__title {
+  text-align: left !important;
+  }
+  .parent-page__books .notion-text {
+  text-align: left !important;
+  }
+  .parent-page__books .notion-quote {
+  text-align: left !important;
+  }
+  .parent-page__books .notion-heading {
+  text-align: left !important;
+  }
+  .parent-page__books .super-content-wrapper {
+  align-self: center !important;
+  }
+  .parent-page__books .embed_documentation_footer--documentationFooter--pnTqy {
+  display: none !important;
+  }
+  /*=====  End of Books Pages CSS  ======*/
+  /*=============================================
   =                 About Page                  =
   =============================================*/
   /*
