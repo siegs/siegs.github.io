@@ -799,27 +799,27 @@
   =============================================*/
   /*
   Project Pages are targeted by the prefix ".parent-page__work" - where "work" is name of the parent page to the projects
-  If you change the name of your parent page (for ex: "doodles") you will change prefix to ".parent-page__doodles"
+  If you change the name of your parent page (for ex: "doodles") you will change prefix to ".parent-page__doodles" EDIT 10.4.23 -- selector is broken but [id^=page-work] is an alternate fix
   */
-  .parent-page__work .super-content-wrapper {
+  [id^=page-work] .super-content-wrapper {
   max-width: 1100px !important;
   }
-  .parent-page__work .notion-header__title {
+  [id^=page-work] .notion-header__title {
   text-align: left !important;
   }
-  .parent-page__work .notion-text {
+  [id^=page-work] .notion-text {
   text-align: left !important;
   }
-  .parent-page__work .notion-quote {
+  [id^=page-work] .notion-quote {
   text-align: left !important;
   }
-  .parent-page__work .notion-heading {
+  [id^=page-work] .notion-heading {
   text-align: left !important;
   }
-  .parent-page__work .super-content-wrapper {
+  [id^=page-work] .super-content-wrapper {
   align-self: center !important;
   }
-  .parent-page__work .embed_documentation_footer--documentationFooter--pnTqy {
+  [id^=page-work] .embed_documentation_footer--documentationFooter--pnTqy {
   display: none !important;
   }
   /*=====  End of Project Pages CSS  ======*/
