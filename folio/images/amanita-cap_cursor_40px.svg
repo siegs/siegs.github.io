@@ -1,0 +1,20 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_81_403)">
+<path d="M-8.74228e-07 20C-1.35705e-06 31.0457 8.9543 40 20 40C31.0457 40 40 33.125 40 20C40 6.875 31.0457 -3.91405e-07 20 -8.74228e-07C5.9375 -1.48892e-06 -3.91405e-07 8.9543 -8.74228e-07 20Z" fill="#FF0000" style="fill:#FF0000;fill:color(display-p3 1.0000 0.0000 0.0000);fill-opacity:1;"/>
+<ellipse cx="27.2593" cy="8.227" rx="3.15" ry="3.0625" transform="rotate(150 27.2593 8.227)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="17.3344" cy="32.3596" rx="2.48464" ry="2.41563" transform="rotate(60 17.3344 32.3596)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="28.3112" cy="29.2992" rx="3.13529" ry="3.16798" transform="rotate(60 28.3112 29.2992)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="15.4473" cy="15.427" rx="3.63719" ry="3.60851" transform="rotate(165 15.4473 15.427)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="34.7473" cy="17.7028" rx="2.25643" ry="2.19375" transform="rotate(165 34.7473 17.7028)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="26.6" cy="18.1514" rx="2.88175" ry="2.8017" transform="rotate(165 26.6 18.1514)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="6.35434" cy="13.3164" rx="1.93371" ry="1.88" transform="rotate(165 6.35434 13.3164)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="20.3543" cy="24.3164" rx="1.93371" ry="1.88" transform="rotate(165 20.3543 24.3164)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<circle cx="9.42529" cy="25.0249" r="2.875" transform="rotate(90 9.42529 25.0249)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+<ellipse cx="17" cy="6" rx="2" ry="2" transform="rotate(90 17 6)" fill="white" style="fill:white;fill:white;fill-opacity:1;"/>
+</g>
+<defs>
+<clipPath id="clip0_81_403">
+<rect width="40" height="40" fill="white" style="fill:white;fill:white;fill-opacity:1;" transform="translate(40) rotate(90)"/>
+</clipPath>
+</defs>
+</svg>
