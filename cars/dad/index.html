@@ -13,18 +13,18 @@ fetch(source).then(r=>{if(!r.ok)throw new Error('Source failed');return r.text()
  if(table){
   const heads=[...table.querySelectorAll('thead th')];
   const widthHead=heads.find(th=>th.textContent.trim().startsWith('Width'));if(widthHead)widthHead.textContent='Width';
-  const compareHead=heads.find(th=>th.textContent.trim().startsWith('Compared'));if(compareHead)compareHead.textContent='Compared to reference';
+  const compareHead=heads.find(th=>th.textContent.trim().startsWith('Compared'));if(compareHead)compareHead.textContent='Compared';
   reorder(table.querySelector('tbody'),'tr');
   const comparisons={
-   'Mazda CX-30':['vs. Toyota','3.1 in shorter, 1.2 in narrower, 3.5 in lower'],
-   'Toyota Corolla Cross':['vs. Jeep','17.4 in shorter, 5.6 in narrower, 5.9 in lower'],
-   'Buick Encore GX':['vs. Toyota','4.9 in shorter, 0.5 in narrower, same height']
+   'Mazda CX-30':'3.1 in shorter, 1.2 in narrower, 3.5 in lower',
+   'Toyota Corolla Cross':'Baseline',
+   'Buick Encore GX':'4.9 in shorter, 0.5 in narrower, same height'
   };
-  table.querySelectorAll('tbody tr').forEach(row=>{const match=Object.keys(comparisons).find(name=>row.textContent.includes(name));if(match){const cell=row.lastElementChild;const [label,detail]=comparisons[match];cell.className='reference-cell';cell.innerHTML='<span class="reference-label">'+label+'</span><span class="reference-detail">'+detail+'</span>';}});
+  table.querySelectorAll('tbody tr').forEach(row=>{const match=Object.keys(comparisons).find(name=>row.textContent.includes(name));if(match){const cell=row.lastElementChild;cell.className='comparison-detail';cell.textContent=comparisons[match];}});
   const labels=[...table.querySelectorAll('thead th')].map(th=>th.textContent.trim());table.querySelectorAll('tbody tr').forEach(row=>[...row.children].forEach((cell,i)=>cell.dataset.label=labels[i]||''));
-  const note=table.closest('section')?.querySelector('.fine');if(note)note.textContent='All measurements are length × body width without mirrors × height. Mazda and Buick are compared with the Toyota; the Toyota is compared with the Jeep Grand Cherokee Limited.';
+  const note=table.closest('section')?.querySelector('.fine');if(note)note.innerHTML='All measurements are length × body width without mirrors × height. The Toyota Corolla Cross Hybrid XSE is the baseline for the table above. <strong>Toyota Corolla Cross Hybrid XSE compared with Jeep Grand Cherokee Limited:</strong> 17.4 inches shorter, 5.6 inches narrower, and 5.9 inches lower.';
  }
- const style=doc.createElement('style');style.textContent='.official-link{margin-top:18px!important;padding-top:15px!important}.official-link a{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;width:auto!important;min-height:44px!important;padding:7px 0!important;border-radius:0!important;background:none!important;color:var(--accent)!important;font-size:14px!important;font-weight:750!important;line-height:1.3!important;text-decoration:underline!important;text-decoration-thickness:1.5px!important;text-underline-offset:4px!important;filter:none!important}.official-link a:hover{text-decoration-thickness:2px!important;filter:none!important}.reference-cell{font-size:11px!important;line-height:1.35!important;color:var(--muted)!important}.reference-label{display:block;margin-bottom:3px;color:var(--ink);font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.04em}.reference-detail{display:block}@media(max-width:620px){.official-link a{width:auto!important;min-height:46px!important;font-size:15px!important}}';doc.head.appendChild(style);
+ const style=doc.createElement('style');style.textContent='.official-link{margin-top:18px!important;padding-top:15px!important}.official-link a{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;width:auto!important;min-height:44px!important;padding:7px 0!important;border-radius:0!important;background:none!important;color:var(--accent)!important;font-size:14px!important;font-weight:750!important;line-height:1.3!important;text-decoration:underline!important;text-decoration-thickness:1.5px!important;text-underline-offset:4px!important;filter:none!important}.official-link a:hover{text-decoration-thickness:2px!important;filter:none!important}.comparison-detail{font-size:11px!important;line-height:1.35!important;color:var(--muted)!important}@media(max-width:620px){.official-link a{width:auto!important;min-height:46px!important;font-size:15px!important}}';doc.head.appendChild(style);
  document.open();document.write('<!doctype html>'+doc.documentElement.outerHTML);document.close();
 }).catch(()=>{document.body.innerHTML='<div class="loading"><b>Unable to load the report.</b><br>Refresh the page to try again.</div>'});
 </script></body></html>
