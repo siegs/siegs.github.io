@@ -392,7 +392,8 @@ const rail = byId('rail');
 const stops = [...rail.querySelectorAll('.stop')];
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const STEP_DURATION = 780;
-const WHEEL_GAP = 180;
+const WHEEL_GAP = 650;
+const WHEEL_SETTLE = 180;
 const WHEEL_DISTANCE = 20;
 const SWIPE_DISTANCE = 44;
 const RAD = Math.PI / 180;
@@ -482,7 +483,7 @@ shapes.rivers = data.rivers.map(projectedPath);
 let width = 0, height = 0, ratio = 1;
 let active = -1, rawPosition = 0, frameRequested = false;
 let transition = null, touchSwipe = null;
-const wheelGesture = { time: -Infinity, distance: 0, handled: false };
+const wheelGesture = { time: -Infinity, distance: 0, handled: false, settleUntil: -Infinity };
 let spin = [...GLOBE_START], spinAnimation = null, drag = null;
 let texture;
 
@@ -1356,6 +1357,7 @@ function render(now) {
     if (t === 1) {
       rawPosition = transition.to;
       transition = null;
+      wheelGesture.settleUntil = now + WHEEL_SETTLE;
     } else {
       rawPosition = mix(transition.from, transition.to, fade(0, 1, t));
       queueFrame();
@@ -1438,16 +1440,22 @@ function step(direction) {
   if (!transition) goTo(rawPosition + direction);
 }
 function handleWheel(event) {
-  if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-  event.preventDefault();
-  const now = performance.now();
-  if (now - wheelGesture.time > WHEEL_GAP) {
+  if (event.ctrlKey || (!event.deltaX && !event.deltaY)) return;
+  const vertical = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+  if (vertical) event.preventDefault();
+
+  // Track the original input time, including diagonal packets and late momentum.
+  const quiet = event.timeStamp - wheelGesture.time >= WHEEL_GAP;
+  wheelGesture.time = Math.max(wheelGesture.time, event.timeStamp);
+  if (transition || performance.now() < wheelGesture.settleUntil) {
+    wheelGesture.handled = true;
+    return;
+  }
+  if (quiet) {
     wheelGesture.distance = 0;
     wheelGesture.handled = false;
   }
-  wheelGesture.time = now;
-  if (transition) wheelGesture.handled = true;
-  if (wheelGesture.handled) return;
+  if (!vertical || wheelGesture.handled) return;
   const unit = event.deltaMode === 1 ? 24 : event.deltaMode === 2 ? height : 1;
   wheelGesture.distance += event.deltaY * unit;
   if (Math.abs(wheelGesture.distance) < WHEEL_DISTANCE) return;
