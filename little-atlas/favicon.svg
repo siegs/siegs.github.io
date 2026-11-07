@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>The Little Atlas compass rose</title>
+  <rect width="64" height="64" rx="14" fill="#f6edda"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#a55339" stroke-width="1.8"/>
+  <path d="m32 5 5 22 22 5-22 5-5 22-5-22-22-5 22-5Z" fill="#fff4de" stroke="#a55339" stroke-width="1.75" stroke-linejoin="round"/>
+  <path d="M32 5v27H5l22-5ZM59 32H32v27l5-22Z" fill="#a55339"/>
+  <circle cx="32" cy="32" r="3.1" fill="#f6edda" stroke="#a55339" stroke-width="1.25"/>
+</svg>
