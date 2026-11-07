@@ -231,8 +231,9 @@ button,a{ -webkit-tap-highlight-color:transparent }
 button{color:inherit;font:inherit;cursor:pointer}
 button:focus-visible,a:focus-visible{outline:2px solid var(--rust);outline-offset:4px}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.journey{position:relative;height:550svh}
-.stage{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;max-width:1760px;margin-inline:auto;isolation:isolate}
+html.atlas-navigation{overflow:hidden;overscroll-behavior-y:none}
+.journey{position:relative}
+.stage{position:relative;touch-action:pinch-zoom;height:100vh;height:100svh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;max-width:1760px;margin-inline:auto;isolation:isolate}
 .stage::before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 18% 28%,#fff9eeb0,transparent 63%);pointer-events:none}
 .masthead{height:76px;display:flex;align-items:center;justify-content:space-between;padding-inline:var(--pad);border-bottom:1px solid var(--line)}
 .wordmark{display:flex;align-items:center;gap:11px;font:500 24px/1 var(--serif);letter-spacing:-.055em}
@@ -262,7 +263,7 @@ h1 .accent{font-style:italic;font-weight:500;color:#4d705b;letter-spacing:-.062e
 .advance svg{width:14px;height:14px}
 .hint{color:var(--quiet);font-size:11px;line-height:1.25}
 .map{position:relative;min-width:0;min-height:0;margin:0;isolation:isolate;overflow:hidden;background:#a8c9bd;border:1px solid #8eab97;border-radius:7px;box-shadow:0 1px 0 #fff8,0 12px 36px #505d4616}
-.map canvas{display:block;width:100%;height:100%;position:absolute;inset:0;touch-action:pan-y}
+.map canvas{display:block;width:100%;height:100%;position:absolute;inset:0}
 .map[data-chapter="0"] canvas{cursor:grab}
 .map[data-chapter="0"] canvas.dragging{cursor:grabbing}
 .map::after{content:"";position:absolute;z-index:1;inset:7px;border:1px solid #fff6df59;border-radius:3px;pointer-events:none}
@@ -334,7 +335,7 @@ h1 .accent{font-style:italic;font-weight:500;color:#4d705b;letter-spacing:-.062e
         </div>
         <div class="story-actions">
           <button class="advance" id="advance" type="button"><span id="advance-text">Start exploring</span><svg id="advance-icon" aria-hidden="true"><use href="#arrow"/></svg></button>
-          <span class="hint" id="hint">or scroll to zoom in</span>
+          <span class="hint" id="hint">Scroll or swipe for the next stop</span>
         </div>
       </article>
       <figure class="map" id="map" data-chapter="0">
@@ -363,7 +364,7 @@ h1 .accent{font-style:italic;font-weight:500;color:#4d705b;letter-spacing:-.062e
 <dialog class="about" id="about" aria-labelledby="about-title">
   <form method="dialog"><button class="close-about" type="submit" aria-label="Close about the map">×</button></form>
   <h2 id="about-title">About the map</h2>
-  <p>Follow the rust-colored marker from Earth to Alice Court. Scroll to travel or tap any stop. Drag the globe sideways to turn it.</p>
+  <p>Follow the rust-colored marker from Earth to Alice Court. Scroll or swipe once to move one stop. You can also use the arrow keys or tap a stop. Drag the globe sideways to turn it.</p>
   <p>Terrain and tree symbols are illustrated. The last marker shows where Alice Court meets Verona Avenue.</p>
   <ul><li><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth</a></li>
 <li><a href="https://www.census.gov/programs-surveys/geography.html" target="_blank" rel="noopener noreferrer">U.S. Census Bureau · state outlines</a></li>
@@ -387,10 +388,13 @@ const globeCanvas = document.createElement('canvas');
 const globeContext = globeCanvas.getContext('2d', { alpha: false });
 const map = byId('map');
 const stage = byId('stage');
-const journey = byId('journey');
 const rail = byId('rail');
 const stops = [...rail.querySelectorAll('.stop')];
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const STEP_DURATION = 780;
+const WHEEL_GAP = 180;
+const WHEEL_DISTANCE = 20;
+const SWIPE_DISTANCE = 44;
 const RAD = Math.PI / 180;
 const TAU = Math.PI * 2;
 const DESTINATION = [-122.005645, 37.82307];
@@ -477,6 +481,8 @@ shapes.rivers = data.rivers.map(projectedPath);
 
 let width = 0, height = 0, ratio = 1;
 let active = -1, rawPosition = 0, frameRequested = false;
+let transition = null, touchSwipe = null;
+const wheelGesture = { time: -Infinity, distance: 0, handled: false };
 let spin = [...GLOBE_START], spinAnimation = null, drag = null;
 let texture;
 
@@ -1325,7 +1331,7 @@ function setChapter(index) {
   byId('plate').textContent = `Atlas plate ${n}`;
   byId('advance-text').textContent = index === 0 ? 'Start exploring' : index === 5 ? 'Back to Earth' : 'Next stop';
   byId('advance-icon').style.transform = index === 5 ? 'rotate(180deg)' : '';
-  byId('hint').textContent = index === 0 ? 'or scroll to zoom in' : '';
+  byId('hint').textContent = index === 0 ? 'Scroll or swipe for the next stop' : '';
   map.dataset.chapter = String(index);
   canvas.setAttribute('aria-label', chapter.alt);
   byId('turn').hidden = index !== 0;
@@ -1342,14 +1348,21 @@ function setChapter(index) {
     byId('chapter').animate([{ opacity: .42, transform: 'translateY(4px)' },{ opacity: 1, transform: 'translateY(0)' }],{ duration: 190, easing: 'ease-out' });
   }
 }
-function distance() { return Math.max(1, journey.offsetHeight - stage.offsetHeight); }
 function render(now) {
   frameRequested = false;
   if (!width || !height) return;
-  rawPosition = clamp((scrollY - journey.offsetTop) / distance()) * (chapters.length - 1);
-  const whole = Math.floor(rawPosition);
+  if (transition) {
+    const t = clamp((now - transition.start) / transition.duration);
+    if (t === 1) {
+      rawPosition = transition.to;
+      transition = null;
+    } else {
+      rawPosition = mix(transition.from, transition.to, fade(0, 1, t));
+      queueFrame();
+    }
+  }
   const snapped = Math.round(rawPosition);
-  const progress = motion.matches ? snapped : whole + fade(.18, .82, rawPosition - whole);
+  const progress = rawPosition;
   setChapter(snapped);
   rail.style.setProperty('--travel', `${(rawPosition / (chapters.length - 1)) * 100}%`);
   if (spinAnimation) {
@@ -1410,8 +1423,70 @@ function resize() {
   queueFrame();
 }
 function goTo(index, instant = false) {
-  const top = journey.offsetTop + distance() * clamp(index,0,5) / 5;
-  window.scrollTo({ top, behavior: motion.matches || instant ? 'auto' : 'smooth' });
+  const to = clamp(index, 0, chapters.length - 1);
+  if (instant || motion.matches || to === rawPosition) {
+    rawPosition = to;
+    transition = null;
+  } else if (transition?.to !== to) {
+    const from = rawPosition;
+    const duration = STEP_DURATION + Math.min(320, Math.max(0, Math.abs(to - from) - 1) * 80);
+    transition = { from, to, duration, start: performance.now() };
+  }
+  queueFrame();
+}
+function step(direction) {
+  if (!transition) goTo(rawPosition + direction);
+}
+function handleWheel(event) {
+  if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+  event.preventDefault();
+  const now = performance.now();
+  if (now - wheelGesture.time > WHEEL_GAP) {
+    wheelGesture.distance = 0;
+    wheelGesture.handled = false;
+  }
+  wheelGesture.time = now;
+  if (transition) wheelGesture.handled = true;
+  if (wheelGesture.handled) return;
+  const unit = event.deltaMode === 1 ? 24 : event.deltaMode === 2 ? height : 1;
+  wheelGesture.distance += event.deltaY * unit;
+  if (Math.abs(wheelGesture.distance) < WHEEL_DISTANCE) return;
+  // Momentum events remain part of this gesture even after the map arrives.
+  wheelGesture.handled = true;
+  step(Math.sign(wheelGesture.distance));
+}
+function startSwipe(event) {
+  if (event.pointerType !== 'touch') return;
+  touchSwipe = event.isPrimary ? { id: event.pointerId, x: event.clientX, y: event.clientY, axis: null } : null;
+}
+function trackSwipe(event) {
+  if (touchSwipe?.id !== event.pointerId || touchSwipe.axis) return;
+  const dx = Math.abs(event.clientX - touchSwipe.x);
+  const dy = Math.abs(event.clientY - touchSwipe.y);
+  if (Math.max(dx, dy) >= 10) touchSwipe.axis = dx > dy ? 'horizontal' : 'vertical';
+}
+function endSwipe(event) {
+  if (touchSwipe?.id !== event.pointerId) return;
+  const start = touchSwipe;
+  touchSwipe = null;
+  const dx = Math.abs(event.clientX - start.x);
+  const dy = start.y - event.clientY;
+  if (start.axis !== 'horizontal' && Math.abs(dy) >= SWIPE_DISTANCE && Math.abs(dy) > dx) step(Math.sign(dy));
+}
+function cancelSwipe(event) {
+  if (touchSwipe?.id === event.pointerId) touchSwipe = null;
+}
+function handleJourneyKey(event) {
+  if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || about.open) return;
+  if (event.target.closest?.('input, textarea, select, [contenteditable]')) return;
+  const { key } = event;
+  if (key === ' ' && event.target.closest?.('button, a')) return;
+  const direction = key === 'ArrowDown' || key === 'PageDown' || (key === ' ' && !event.shiftKey) ? 1
+    : key === 'ArrowUp' || key === 'PageUp' || key === ' ' ? -1 : 0;
+  if (!direction && key !== 'Home' && key !== 'End') return;
+  event.preventDefault();
+  if (direction) step(direction);
+  else goTo(key === 'Home' ? 0 : chapters.length - 1);
 }
 function turnGlobe() {
   if (active !== 0) return;
@@ -1423,17 +1498,19 @@ function turnGlobe() {
   queueFrame();
 }
 function startDrag(event) {
-  if (active !== 0 || rawPosition > .22 || event.button !== 0) return;
+  if (active !== 0 || transition || !event.isPrimary || event.button !== 0) return;
   spinAnimation = null;
   drag = { id: event.pointerId, x: event.clientX, y: event.clientY, lon: spin[0], lat: spin[1] };
   canvas.setPointerCapture(event.pointerId);
   canvas.classList.add('dragging');
 }
 function moveDrag(event) {
-  if (!drag || drag.id !== event.pointerId) return;
+  if (!drag || drag.id !== event.pointerId || transition) return;
+  const touch = event.pointerType === 'touch';
+  if (touch && touchSwipe?.axis !== 'horizontal') return;
   const factor = 58 / globeRadius();
   spin[0] = drag.lon - (event.clientX - drag.x) * factor;
-  spin[1] = clamp(drag.lat + (event.clientY - drag.y) * factor, -72, 72);
+  if (!touch) spin[1] = clamp(drag.lat + (event.clientY - drag.y) * factor, -72, 72);
   queueFrame();
 }
 function endDrag(event) {
@@ -1445,8 +1522,16 @@ function endDrag(event) {
 texture = paperTexture();
 new ResizeObserver(resize).observe(map);
 window.addEventListener('resize', resize, { passive: true });
-window.addEventListener('scroll', queueFrame, { passive: true });
-motion.addEventListener('change', queueFrame);
+stage.addEventListener('wheel', handleWheel, { passive: false });
+stage.addEventListener('pointerdown', startSwipe);
+stage.addEventListener('pointermove', trackSwipe, { capture: true });
+stage.addEventListener('pointerup', endSwipe);
+stage.addEventListener('pointercancel', cancelSwipe);
+window.addEventListener('keydown', handleJourneyKey);
+motion.addEventListener('change', () => {
+  if (motion.matches && transition) goTo(transition.to, true);
+  else queueFrame();
+});
 document.fonts.ready.then(queueFrame);
 for (const stop of stops) stop.addEventListener('click', () => goTo(Number(stop.dataset.stop)));
 rail.addEventListener('keydown', event => {
@@ -1468,6 +1553,7 @@ for (const event of ['pointerup','pointercancel','lostpointercapture']) canvas.a
 const about = byId('about');
 byId('about-button').addEventListener('click', () => about.showModal());
 about.addEventListener('click', event => { if (event.target === about) about.close(); });
+document.documentElement.classList.add('atlas-navigation');
 resize();
 const fromLink = chapters.findIndex(chapter => `#${chapter.id}` === location.hash);
 if (fromLink > 0) goTo(fromLink, true);
