@@ -392,9 +392,8 @@ const rail = byId('rail');
 const stops = [...rail.querySelectorAll('.stop')];
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const STEP_DURATION = 780;
-const WHEEL_GAP = 650;
-const WHEEL_SETTLE = 180;
-const WHEEL_DISTANCE = 20;
+const WHEEL_END_GAP = 240; // Wheel packets closer than this belong to the same gesture.
+const WHEEL_DISTANCE = 20; // Filter trackpad noise and small momentum reversals.
 const SWIPE_DISTANCE = 44;
 const RAD = Math.PI / 180;
 const TAU = Math.PI * 2;
@@ -483,7 +482,7 @@ shapes.rivers = data.rivers.map(projectedPath);
 let width = 0, height = 0, ratio = 1;
 let active = -1, rawPosition = 0, frameRequested = false;
 let transition = null, touchSwipe = null;
-const wheelGesture = { time: -Infinity, distance: 0, handled: false, settleUntil: -Infinity };
+const wheelGesture = { time: -Infinity, direction: 0, distance: 0, reverse: 0, handled: false };
 let spin = [...GLOBE_START], spinAnimation = null, drag = null;
 let texture;
 
@@ -1357,7 +1356,6 @@ function render(now) {
     if (t === 1) {
       rawPosition = transition.to;
       transition = null;
-      wheelGesture.settleUntil = now + WHEEL_SETTLE;
     } else {
       rawPosition = mix(transition.from, transition.to, fade(0, 1, t));
       queueFrame();
@@ -1441,27 +1439,47 @@ function step(direction) {
 }
 function handleWheel(event) {
   if (event.ctrlKey || (!event.deltaX && !event.deltaY)) return;
-  const vertical = Math.abs(event.deltaY) > Math.abs(event.deltaX);
-  if (vertical) event.preventDefault();
+  // Horizontal two-finger gestures should not accidentally navigate the atlas.
+  if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+  event.preventDefault();
 
-  // Track the original input time, including diagonal packets and late momentum.
-  const quiet = event.timeStamp - wheelGesture.time >= WHEEL_GAP;
-  wheelGesture.time = Math.max(wheelGesture.time, event.timeStamp);
-  if (transition || performance.now() < wheelGesture.settleUntil) {
-    wheelGesture.handled = true;
-    return;
-  }
-  if (quiet) {
+  const unit = event.deltaMode === 1 ? 24 : event.deltaMode === 2 ? height : 1;
+  const distance = Math.abs(event.deltaY * unit);
+  const direction = Math.sign(event.deltaY);
+  const now = event.timeStamp;
+
+  // Native scrollend cannot fire here because the browser's scroll is prevented.
+  // Treat a short silence as the end of a desktop wheel/trackpad gesture.
+  if (now - wheelGesture.time >= WHEEL_END_GAP) {
+    wheelGesture.direction = direction;
     wheelGesture.distance = 0;
+    wheelGesture.reverse = 0;
     wheelGesture.handled = false;
   }
-  if (!vertical || wheelGesture.handled) return;
-  const unit = event.deltaMode === 1 ? 24 : event.deltaMode === 2 ? height : 1;
-  wheelGesture.distance += event.deltaY * unit;
-  if (Math.abs(wheelGesture.distance) < WHEEL_DISTANCE) return;
-  // Momentum events remain part of this gesture even after the map arrives.
+  wheelGesture.time = now;
+
+  if (direction !== wheelGesture.direction) {
+    if (wheelGesture.handled) {
+      // Accept deliberate reversals even while the previous map is animating,
+      // but filter isolated opposite-sign momentum packets.
+      wheelGesture.reverse += distance;
+      if (wheelGesture.reverse < WHEEL_DISTANCE) return;
+      wheelGesture.distance = wheelGesture.reverse;
+      wheelGesture.handled = false;
+    } else {
+      wheelGesture.distance = distance;
+    }
+    wheelGesture.direction = direction;
+    wheelGesture.reverse = 0;
+  } else {
+    wheelGesture.reverse = 0;
+    wheelGesture.distance += distance;
+  }
+
+  if (wheelGesture.handled || wheelGesture.distance < WHEEL_DISTANCE) return;
   wheelGesture.handled = true;
-  step(Math.sign(wheelGesture.distance));
+  // Use the intended integer stop, not a fractional animation frame.
+  goTo((transition?.to ?? Math.round(rawPosition)) + direction);
 }
 function startSwipe(event) {
   if (event.pointerType !== 'touch') return;
