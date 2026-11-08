@@ -392,8 +392,11 @@ const rail = byId('rail');
 const stops = [...rail.querySelectorAll('.stop')];
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const STEP_DURATION = 780;
-const WHEEL_END_GAP = 240; // Wheel packets closer than this belong to the same gesture.
-const WHEEL_DISTANCE = 20; // Filter trackpad noise and small momentum reversals.
+const WHEEL_END_GAP = 420; // Definitely idle, even on a busy rendering frame.
+const WHEEL_REPEAT_GAP = 135; // Typical gap between deliberate wheel notches.
+const WHEEL_DISTANCE = 20; // Ignore tiny wheel movements and momentum bounce.
+const WHEEL_REACCEL_MIN = 26; // A new flick can start before the momentum tail ends.
+const WHEEL_REACCEL_WAIT = 170;
 const SWIPE_DISTANCE = 44;
 const RAD = Math.PI / 180;
 const TAU = Math.PI * 2;
@@ -482,7 +485,10 @@ shapes.rivers = data.rivers.map(projectedPath);
 let width = 0, height = 0, ratio = 1;
 let active = -1, rawPosition = 0, frameRequested = false;
 let transition = null, touchSwipe = null;
-const wheelGesture = { time: -Infinity, direction: 0, distance: 0, reverse: 0, handled: false };
+const wheelGesture = {
+  time: -Infinity, direction: 0, distance: 0, reverse: 0, handled: false,
+  lastDelta: 0, peakDelta: 0, troughDelta: Infinity, firedAt: -Infinity, varied: false,
+};
 let spin = [...GLOBE_START], spinAnimation = null, drag = null;
 let texture;
 
@@ -1439,46 +1445,74 @@ function step(direction) {
 }
 function handleWheel(event) {
   if (event.ctrlKey || (!event.deltaX && !event.deltaY)) return;
-  // Horizontal two-finger gestures should not accidentally navigate the atlas.
   if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
   event.preventDefault();
 
   const unit = event.deltaMode === 1 ? 24 : event.deltaMode === 2 ? height : 1;
-  const distance = Math.abs(event.deltaY * unit);
+  const delta = Math.abs(event.deltaY * unit);
   const direction = Math.sign(event.deltaY);
   const now = event.timeStamp;
 
-  // Native scrollend cannot fire here because the browser's scroll is prevented.
-  // Treat a short silence as the end of a desktop wheel/trackpad gesture.
-  if (now - wheelGesture.time >= WHEEL_END_GAP) {
+  // Trackpad momentum often arrives for a long time, sometimes with pauses
+  // while the map renders. Time alone would mistake one hard flick for 5 steps.
+  const gap = now - wheelGesture.time;
+  let fresh = gap >= WHEEL_END_GAP;
+  if (!fresh && wheelGesture.handled && direction === wheelGesture.direction) {
+    // Conventional wheels often send one fixed-size delta per distinct notch.
+    const repeatedNotch = gap >= WHEEL_REPEAT_GAP && !wheelGesture.varied &&
+      delta >= 70 && Math.abs(delta - wheelGesture.lastDelta) <= Math.max(7, delta * .08);
+    // A second trackpad flick accelerates again after the first one slowed down.
+    let newAcceleration = false;
+    if (now - wheelGesture.firedAt >= WHEEL_REACCEL_WAIT) {
+      if (delta < wheelGesture.peakDelta * .65) {
+        wheelGesture.troughDelta = Math.min(wheelGesture.troughDelta, delta);
+      }
+      newAcceleration = wheelGesture.troughDelta < Infinity &&
+        delta >= Math.max(WHEEL_REACCEL_MIN, wheelGesture.troughDelta * 1.85) &&
+        delta >= wheelGesture.lastDelta * 1.2;
+    }
+    fresh = repeatedNotch || newAcceleration;
+  }
+  if (fresh) {
     wheelGesture.direction = direction;
     wheelGesture.distance = 0;
     wheelGesture.reverse = 0;
     wheelGesture.handled = false;
+    wheelGesture.peakDelta = 0;
+    wheelGesture.troughDelta = Infinity;
+    wheelGesture.varied = false;
+  } else if (direction === wheelGesture.direction &&
+             Math.abs(delta - wheelGesture.lastDelta) >= Math.max(12, wheelGesture.peakDelta * .18)) {
+    // Mark ramping/decaying momentum so similarly sized later packets won't rearm it.
+    wheelGesture.varied = true;
   }
   wheelGesture.time = now;
+  wheelGesture.lastDelta = delta;
+  wheelGesture.peakDelta = Math.max(wheelGesture.peakDelta, delta);
 
   if (direction !== wheelGesture.direction) {
     if (wheelGesture.handled) {
-      // Accept deliberate reversals even while the previous map is animating,
-      // but filter isolated opposite-sign momentum packets.
-      wheelGesture.reverse += distance;
+      // Ignore one stray opposite-sign packet, but honor a deliberate reversal.
+      wheelGesture.reverse += delta;
       if (wheelGesture.reverse < WHEEL_DISTANCE) return;
       wheelGesture.distance = wheelGesture.reverse;
       wheelGesture.handled = false;
     } else {
-      wheelGesture.distance = distance;
+      wheelGesture.distance = delta;
     }
     wheelGesture.direction = direction;
     wheelGesture.reverse = 0;
+    wheelGesture.peakDelta = delta;
+    wheelGesture.troughDelta = Infinity;
   } else {
     wheelGesture.reverse = 0;
-    wheelGesture.distance += distance;
+    wheelGesture.distance += delta;
   }
 
   if (wheelGesture.handled || wheelGesture.distance < WHEEL_DISTANCE) return;
   wheelGesture.handled = true;
-  // Use the intended integer stop, not a fractional animation frame.
+  wheelGesture.firedAt = now;
+  // Navigate relative to the destination stop, never the fractional animation.
   goTo((transition?.to ?? Math.round(rawPosition)) + direction);
 }
 function startSwipe(event) {
